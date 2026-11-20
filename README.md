@@ -100,7 +100,7 @@ Gerekenler: **Visual Studio** (ASP.NET iş yükü kurulu) ve **.NET 10 SDK**.
 1. Projeyi indir:
 
    ```
-   git clone https://github.com/kullaniciadin/GorevTakip.git
+   git clone https://github.com/halilh07/GorevTakip.git
    ```
 
 2. `GorevTakip.sln` dosyasını Visual Studio ile aç
