@@ -1,0 +1,1237 @@
+﻿
+:root {
+    --ana-renk: #6a5acd; /* Mor: kart, düğmeler, vurgular */
+    --ikinci-renk: #4facfe; /* Mavi: renk geçişlerinde ikinci renk */
+    --zemin: #f4f6fb; /* Sayfanın arka planı (çok açık gri-mavi) */
+    --kart-zemin: #ffffff; /* Kutuların, kartların arka planı (beyaz) */
+    --yazi-renk: #2d3436; /* Normal yazı rengi (koyu gri) */
+    --soluk-yazi: #888888; /* Küçük, ikincil yazılar için açık gri */
+}
+
+/* =====================================================
+   GENEL SAYFA AYARLARI
+   DEĞİŞTİRME İSTEĞİ: Sayfayı genişletmek için max-width değerini artır.
+   Yazı tipini değiştirmek için font-family satırını düzenle.
+   ===================================================== */
+body {
+    /* Yazı tipi: soldan sağa denenir. Segoe UI (Windows'un modern yazı tipi)
+       varsa onu kullanır, yoksa Arial, o da yoksa herhangi bir sans-serif.
+       DEĞİŞTİRME İSTEĞİ: Yazı tipini buradan değiştirirsin. */
+    font-family: "Segoe UI", Arial, sans-serif;
+    /* var(--zemin) = yukarıda tanımladığımız değişkenin değerini kullan. */
+    background: var(--zemin);
+    color: var(--yazi-renk);
+    max-width: 1040px; /* Sayfa içeriği en fazla 420 piksel geniş olsun */
+    margin: 40px auto; /* Üstten/alttan 40px boşluk, yanlardan otomatik = ortala */
+    padding: 0 16px; /* Telefonda kenarlara yapışmasın */
+}
+
+/* =====================================================
+   GİZLEME SINIFI (bu adımın en önemli kuralı)
+   Bir elemana class="gizli" verilirse ekrandan tamamen kalkar.
+   JavaScript bu sınıfı ekleyip çıkararak bölümleri gösterir/gizler.
+   Renk veya yazı değil, "göster/gizle" mantığını burası yönetir.
+   ===================================================== */
+.gizli {
+    display: none;
+}
+
+/* =====================================================
+   GİRİŞ ALANI
+   ===================================================== */
+#girisAlani {
+     background: var(--kart-zemin);
+     padding: 24px;
+     border-radius: 16px;
+     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+#girisAlani input {
+        display: block; /* Her kutu kendi satırına geçsin (alt alta) */
+        width: 100%; /* Satırın tamamını kapla */
+        box-sizing: border-box; /* Genişliğe iç boşluk ve çerçeve de dahil olsun, taşmasın */
+        padding: 12px;
+        border: 1px solid #dcdde1; /* İnce açık gri çerçeve */
+        border-radius: 10px; /* Yuvarlak köşeler */
+        font-size: 15px;
+        margin-bottom: 8px; /* Kutular arası boşluk */
+}
+#girisAlani input:focus {
+        outline: none;
+        border-color: var(--ana-renk);
+        box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.2);
+}
+
+.giris-dugmeleri {
+    display: flex; /* İçindekileri yan yana dizer */
+    gap: 8px; /* Düğmeler arası boşluk */
+}
+
+    .giris-dugmeleri button {
+        flex: 1; /* İki düğme eşit genişlikte paylaşsın */
+        padding: 8px;
+        cursor: pointer; /* Üstüne gelince el işareti çıksın */
+    }
+
+/* Hata/bilgi mesajı. Kırmızı renk hata için uygun.
+   DEĞİŞTİRME İSTEĞİ: Rengi değiştirmek için "color" satırını düzenle. */
+#mesaj {
+    color: #c0392b;
+    font-size: 14px;
+}
+
+/* =====================================================
+   ÜST ÇUBUK (giriş yapanın e-postası + çıkış düğmesi)
+   ===================================================== */
+.ust-cubuk {
+    display: flex;
+    justify-content: space-between; /* Biri sola, biri sağa yaslansın */
+    align-items: center; /* Dikey ortala */
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* =====================================================
+   GÖREV EKLEME SATIRI (kutu + Ekle düğmesi)
+   ===================================================== */
+/* Görev ekleme kartı: beyaz, yuvarlak köşeli, hafif gölgeli kutu.
+   display: flex + flex-wrap: wrap = içindekiler yan yana dizilir,
+   sığmayanlar alt satıra geçer.
+   gap = elemanlar arası boşluk.
+   DEĞİŞTİRME İSTEĞİ: Boşluğu gap ve padding ile, köşeleri border-radius ile ayarlarsın. */
+.ekle-satiri {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: var(--kart-zemin);
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+    /* Yazı kutusu ve kategori listesi için ortak görünüm.
+   Virgülle iki seçiciyi birlikte yazdık: aynı kural ikisine de uygulanır.
+   box-sizing: border-box = genişliğe iç boşluk ve çerçeve de dahil olsun,
+   yoksa %100 genişlikteki kutu kartın dışına taşar. */
+    .ekle-satiri input,
+    .ekle-satiri select {
+        box-sizing: border-box;
+        padding: 12px;
+        border: 1px solid #dcdde1;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    /* flex: 1 1 100% = üç sayı sırayla "büyüyebilir, küçülebilir, başlangıç genişliği".
+   Başlangıç genişliği %100 olduğu için görev kutusu satırın TAMAMINI kaplar,
+   kategori listesi ve düğme altındaki yeni satıra düşer. */
+    .ekle-satiri input {
+        flex: 1 1 100%;
+    }
+
+    /* flex: 1 = kalan boş yeri kapla. Kategori listesi, düğmenin yanında
+   kalan genişliğin tamamını doldurur. */
+    .ekle-satiri select {
+        flex: 1;
+    }
+
+    /* Ekle düğmesi: genel "button" stilini (mor, yuvarlak) zaten alıyor,
+   burada sadece iç boşluğunu büyütüyoruz. */
+    .ekle-satiri button {
+        padding: 12px 22px;
+    }
+
+    /* Kutuya veya listeye tıklayınca (odaklanınca) mor çerçeve ve hafif ışıma.
+   Giriş ekranındaki kutularla aynı görünüm.
+   NOT: rgba içindeki 3 sayı --ana-renk'in RGB karşılığı. Temayı değiştirirsen
+   bu sayıları da değiştir. */
+    .ekle-satiri input:focus,
+    .ekle-satiri select:focus {
+        outline: none;
+        border-color: var(--ana-renk);
+        box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.2);
+    }
+
+/* Sayaç yazısı ("2 / 5 görev tamamlandı") */
+#sayac {
+    color: #666;
+    font-size: 14px;
+}
+
+/* =====================================================
+   GÖREV LİSTESİ
+   ===================================================== */
+ul {
+    list-style: none; /* Madde işaretlerini kaldır */
+    padding: 0;
+}
+
+/* Her görev kendi kartı: beyaz zemin, yuvarlak köşe, hafif gölge.
+   Eskiden satırlar arasında çizgi (border-bottom) vardı, kartlarda gerek kalmadı.
+   margin-bottom = kartlar arası boşluk.
+   transition = hover'da yükselme animasyonu ani değil, yumuşak olsun.
+   DEĞİŞTİRME İSTEĞİ: Köşe yuvarlaklığı için border-radius, kartların iç
+   boşluğu için padding, kartlar arası mesafe için margin-bottom değerini değiştir. */
+li {
+    display: flex; /* Onay kutusu, yazı, Sil düğmesi yan yana */
+    align-items: center; /* Dikey ortala */
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: var(--kart-zemin);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+    /* Fare kartın üstüne gelince kart 2 piksel yukarı kayar ve gölgesi büyür.
+   translateY(-2px) = 2 piksel yukarı (eksi değer yukarı demek).
+   DEĞİŞTİRME İSTEĞİ: Bu efekti istemezsen bu bloğun tamamını silebilirsin. */
+    li:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    li span {
+        flex: 1; /* Yazı kalan yeri doldursun, Sil düğmesini sağa itsin */
+    }
+
+    /* Tamamlanan görevin yazısı çizili ve gri olur.
+   DEĞİŞTİRME İSTEĞİ: Tamamlananlar yeşil olsun istersen color: green; yaz. */
+    li.bitti span {
+        text-decoration: line-through;
+        color: gray;
+    }
+
+/* Sil düğmesi.
+   DEĞİŞTİRME İSTEĞİ: Rengi değiştirmek için background değerini düzenle. */
+.sil {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px; /* Köşeleri yuvarlat */
+    cursor: pointer;
+}
+
+/* Görev başlığının altındaki küçük bilgi satırı (kategori • tarih).
+   display: block = kendi satırına geçsin (başlığın altına insin).
+   DEĞİŞTİRME İSTEĞİ: Rengi ve yazı boyutunu buradan ayarlayabilirsin. */
+li span small {
+    display: inline-block;
+    width: 100%;
+    color: #888;
+    font-size: 12px;
+}
+
+/* =====================================================
+   PROFİL KARTI
+   ===================================================== */
+
+/* Kartın kendisi: renk geçişli, yuvarlak köşeli büyük kutu.
+   display: flex + flex-wrap: wrap = içindekiler yan yana dizilir,
+   sığmayanlar alt satıra geçer (istatistik kutuları alta inecek).
+   DEĞİŞTİRME İSTEĞİ:
+    - Renkleri değiştirmek için linear-gradient içindeki iki renk kodunu değiştir
+      (#6a5acd mor, #4facfe mavi). Kartı tek renk yapmak için
+      linear-gradient(...) yerine #6a5acd gibi tek bir renk yaz.
+    - Köşe yuvarlaklığı: border-radius değeri (büyüdükçe daha yuvarlak).
+    - İç boşluk: padding. */
+.profil-karti {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px; /* Elemanlar arası boşluk */
+    padding: 18px; /* Kartın iç boşluğu */
+    margin-bottom: 20px; /* Kartın altındaki boşluk */
+    border-radius: 16px;
+    color: white; /* Karttaki tüm yazılar beyaz */
+    /* linear-gradient(açı, renk1, renk2) = iki renk arasında geçiş.
+       135deg = sol üstten sağ alta doğru. */
+    background: linear-gradient(135deg, var(--ana-renk), var(--ikinci-renk));
+    /* Gölge: yatay 0, dikey 6px, bulanıklık 18px, %15 siyah.
+       Kart sayfadan hafif yükselmiş görünür. */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Yuvarlak profil simgesi (içinde e-postanın ilk harfi).
+   border-radius: 50% = kare kutuyu tam daire yapar.
+   rgba(255,255,255,0.25) = %25 saydam beyaz, arkadaki renk hafif görünür.
+   display:flex + ortalama satırları = harfi dairenin tam ortasına koyar.
+   DEĞİŞTİRME İSTEĞİ: Boyutu büyütmek için width ve height değerlerini
+   AYNI sayıda tut (örn. 72px), yoksa daire oval olur. */
+.profil-harf {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid white;
+    display: flex;
+    align-items: center; /* Dikey ortala */
+    justify-content: center; /* Yatay ortala */
+    font-size: 26px;
+    font-weight: bold;
+}
+
+
+/* Seviye yazısının bulunduğu alan: simgenin yanında kalan boşluğu doldurur.
+   flex: 1 = "kalan boş yeri sen kapla". */
+.profil-bilgi {
+    flex: 1;
+}
+
+/* "Seviye 3" yazısı.
+   DEĞİŞTİRME İSTEĞİ: Boyutu font-size ile ayarla. */
+.profil-seviye {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* İstatistik kutularının dış sarmalayıcısı.
+   flex-basis: 100% = tüm satırı kapla. Bu yüzden simge ve seviye üst satırda,
+   istatistikler alt satırda kalır.
+   display: flex = iki istatistik kutusu yan yana dizilir. */
+.profil-istatistikler {
+    flex-basis: 100%;
+    display: flex;
+    gap: 12px;
+}
+
+/* Her bir istatistik kutusu (Toplam puan / Tamamlanan görev).
+   flex: 1 = iki kutu eşit genişlikte paylaşır.
+   Arka plan: %18 saydam beyaz. Kart renginin üzerinde hafif açık bir kutu olur.
+   text-align: center = yazıları ortala. */
+.istatistik {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Büyük sayı (örn. 215).
+   display: block = kendi satırında dursun, etiketi alta itsin.
+   (span normalde satır içi olduğu için block yapmazsak yan yana dizilirdi.) */
+.istatistik-sayi {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Sayının altındaki küçük etiket ("Toplam puan").
+   opacity: 0.9 = %90 görünürlük, sayıdan hafif soluk durur. */
+.istatistik-etiket {
+    display: block;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+/* =====================================================
+   SEVİYE İLERLEME ÇUBUĞU
+   ===================================================== */
+
+/* Çubuğun "yolu": boş çubuğun tamamı (pilin dış çerçevesi gibi).
+   height: 10px = çubuğun kalınlığı.
+   overflow: hidden = içteki dolgu köşelerden taşarsa kes. Bu olmasa
+   dolgunun köşeleri yuvarlak yolun dışına çıkar, düzgün görünmez.
+   DEĞİŞTİRME İSTEĞİ: Kalınlaştırmak için height değerini artır (örn. 14px).
+   Yolun rengi: rgba(255,255,255,0.3) = %30 saydam beyaz. */
+.ilerleme-kutu {
+    height: 10px;
+    margin-top: 8px;
+    border-radius: 999px; /* Çok büyük değer = uçları tam yuvarlak */
+    background: rgba(255, 255, 255, 0.3);
+    overflow: hidden;
+}
+
+/* Çubuğun dolu kısmı.
+   width: 0% = başlangıçta boş. JavaScript bunu %0 ile %100 arasında ayarlayacak
+   (örn. style.width = "25%").
+   height: 100% = yolun tam yüksekliğini kapla.
+   transition: width 0.4s = genişlik değişince ANİ atlamasın, 0.4 saniyede
+   yumuşakça dolsun. Görev tamamlayınca çubuğun kayarak dolması bundan.
+   DEĞİŞTİRME İSTEĞİ: Rengi background ile değiştir (şu an beyaz).
+   Animasyonu hızlandırmak için 0.4s değerini küçült, kapatmak için transition satırını sil. */
+.ilerleme-dolgu {
+    width: 0%;
+    height: 100%;
+    border-radius: 999px;
+    background: white;
+    transition: width 0.4s ease;
+}
+
+/* Çubuğun altındaki yazı ("150 / 600 puan").
+   opacity: 0.9 = hafif soluk durur. */
+.ilerleme-yazi {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+button {
+    border: none;
+    border-radius: 10px;
+    background: var(--ana-renk);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.15s;
+}
+
+    /* :hover = fare düğmenin üstündeyken.
+   filter: brightness(0.92) = rengi %8 koyulaştırır (her renkte çalışır,
+   kırmızı Sil düğmesi de, mor düğmeler de koyulaşır). */
+    button:hover {
+        filter: brightness(0.92);
+    }
+
+    /* :active = düğmeye basılı tutulduğu an.
+   scale(0.97) = düğme %3 küçülür, "bastım" hissi verir. */
+    button:active {
+        transform: scale(0.97);
+    }
+
+#kayitBtn,
+#cikisBtn {
+    background: transparent;
+    color: var(--ana-renk);
+    border: 2px solid var(--ana-renk);
+}
+
+/* Çıkış düğmesi üst çubukta olduğu için biraz daha küçük ve kompakt. */
+#cikisBtn {
+    padding: 4px 12px;
+}
+
+/* Görev kartlarındaki onay kutusu.
+   width ve height = kutunun boyutu (varsayılan çok küçük).
+   accent-color = kutunun işaretli hâlinin rengi. Mor tema rengini kullanıyoruz,
+   böylece tarayıcının varsayılan mavisi yerine sitenin rengiyle uyumlu olur.
+   DEĞİŞTİRME İSTEĞİ: Boyutu width ve height ile AYNI sayıda tutarak değiştir. */
+li input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--ana-renk);
+    cursor: pointer;
+}
+
+/* Boş liste mesajı: ortalanmış, soluk renkli yazı.
+   var(--soluk-yazi) = renk değişkenlerinde tanımladığımız açık gri.
+   DEĞİŞTİRME İSTEĞİ: Yazı boyutunu font-size, boşluğu padding ile ayarla. */
+.bos-mesaj {
+    text-align: center;
+    color: var(--soluk-yazi);
+    padding: 24px;
+    font-size: 15px;
+}
+
+/* SAYFA BAŞLIĞI ("Görev Takip") */
+h1 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, var(--ana-renk), var(--ikinci-renk));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+#kullaniciYazi {
+    font-weight: 600;
+    color: var(--yazi-renk);
+}
+
+/* =====================================================
+   KATEGORİ ROZETLERİ
+   ===================================================== */
+
+/* Tüm rozetlerin ortak görünümü: yuvarlak etiket, beyaz yazı.
+   border-radius: 999px = uçları tam yuvarlak (hap şekli).
+   Renk yazılmayan kategori için varsayılan zemin gridir. */
+.rozet {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    background: #999999;
+}
+
+/* Her kategorinin kendi rengi. Sınıf adları script.js'teki eşleştirme listesiyle
+   aynı olmalı (rozet- + listedeki sağ taraf).
+   DEĞİŞTİRME İSTEĞİ: Rengi değiştirmek için hex kodunu değiştir.
+   Yeni kategori için aynı biçimde yeni bir satır yaz. */
+.rozet-ders {
+    background: #6a5acd;
+}
+
+.rozet-spor {
+    background: #00b894;
+}
+
+.rozet-is {
+    background: #e17055;
+}
+
+.rozet-kisisel {
+    background: #0984e3;
+}
+
+/* Sarı zemin üzerinde beyaz yazı okunmaz, o yüzden bu rozetin yazısını koyu yaptık. */
+.rozet-alisveris {
+    background: #fdcb6e;
+    color: #2d3436;
+}
+
+.giris-aciklama {
+    text-align: center;
+    color: var(--soluk-yazi);
+    font-size: 14px;
+    margin: 0 0 16px 0; /* sırayla: üst, sağ, alt, sol. Sadece altta 16px boşluk */
+}
+
+li input[type="checkbox"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* SON TAMAMLANANLAR KISIMI */
+/* Bölümün kendisi: görev ekleme kartıyla aynı görünüm
+   (beyaz zemin, yuvarlak köşe, hafif gölge). */
+.son-bolum {
+    background: var(--kart-zemin);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* "Son tamamlananlar" başlığı (h2).
+   margin: 0 0 10px 0 = sadece altta 10px boşluk (üst, sağ, alt, sol sırasıyla).
+   Tarayıcının h2 için koyduğu varsayılan büyük boşlukları sıfırlıyoruz.
+   DEĞİŞTİRME İSTEĞİ: Boyutu font-size ile ayarla. */
+.bolum-baslik {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    color: var(--yazi-renk);
+}
+
+/* Her görev satırı: rozet, başlık, puan yan yana.
+   Satırlar arasında ince açık gri çizgi. */
+.son-satir {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+    /* :last-child = bu sınıftaki SON eleman.
+   Listenin en altındaki satırın alt çizgisini kaldırıyoruz, kartın kenarına
+   yapışık gereksiz bir çizgi görünmesin. */
+    .son-satir:last-child {
+        border-bottom: none;
+    }
+
+/* Görev başlığı: kalan boş yeri doldurur, puanı sağa iter.
+   Uzun başlık satırı bozmasın diye üç özellik birlikte çalışır:
+     white-space: nowrap = yazı alt satıra geçmesin
+     overflow: hidden    = sığmayan kısım gizlensin
+     text-overflow: ellipsis = gizlenen yerde "..." göster
+   min-width: 0 = flex içindeki bir elemanın daralabilmesi için gerekli.
+   (Olmazsa uzun başlık kutuyu taşırır.)
+   DEĞİŞTİRME İSTEĞİ: Uzun başlıkların alt satıra geçmesini istersen
+   white-space, overflow ve text-overflow satırlarını sil. */
+.son-baslik {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Puan: kalın ve yeşil (kazanılan puan).
+   DEĞİŞTİRME İSTEĞİ: Rengi hex koduyla değiştir. */
+.son-puan {
+    font-weight: 700;
+    color: #00b894;
+}
+
+    /* Puan eksiyse (ceza yenmişse) kırmızı olsun.
+   ".son-puan.eksi" (aralarında boşluk YOK) = hem son-puan hem eksi sınıfına
+   sahip eleman. "eksi" sınıfını bir sonraki parçada JavaScript ekleyecek. */
+    .son-puan.eksi {
+        color: #d63031;
+    }
+
+/* "Henüz tamamlanan görev yok." yazısı: ortalı, soluk, kenar boşluğu yok. */
+.son-bos {
+    margin: 0;
+    text-align: center;
+    color: var(--soluk-yazi);
+    font-size: 14px;
+}
+
+/* İKİ SÜTUNLU DÜZEN KODU */
+.duzen {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* min-width: 0 = ızgara çocuğunun gerektiğinde daralabilmesine izin verir.
+   Olmazsa uzun bir görev başlığı sütunu zorla genişletip düzeni bozabilir. */
+.sol-sutun,
+.sag-sutun {
+    min-width: 0;
+}
+
+/* Giriş kartı artık geniş sayfada çok yayılmasın:
+   max-width = en fazla 420 piksel, margin: 0 auto = yatayda ortala.
+   (Giriş kartı için zaten daha önce yazdığımız #girisAlani kuralı var,
+   bu kural onun üzerine sadece iki özellik daha ekliyor.) */
+#girisAlani {
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.profil-karti {
+    flex-direction: column;
+    text-align: center;
+    padding: 26px 20px;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Büyük, halkalı simge.
+   box-shadow: 0 0 0 6px ... = kaydırması ve bulanıklığı sıfır, kalınlığı 6 piksel
+     olan gölge. Simgenin çevresinde ince saydam bir HALKA gibi görünür.
+   DEĞİŞTİRME İSTEĞİ: Boyutu büyütürken width ve height AYNI sayıda kalsın. */
+.profil-harf {
+    width: 88px;
+    height: 88px;
+    font-size: 38px;
+    border-width: 3px;
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.18);
+}
+
+/* Eskiden "flex: 1" idi: yan yana dizilirken kalan yeri dolduruyordu.
+   Artık alt alta dizildiği için "flex: 1" dikey büyümeye yol açardı.
+   flex: none = büyüme, küçülme yok; width: 100% = kartın tam genişliğini kapla. */
+.profil-bilgi {
+    flex: none;
+    width: 100%;
+}
+
+.profil-seviye {
+    font-size: 26px;
+}
+
+/* Eskiden "flex-basis: 100%" idi: yan yana düzende "satırın tamamı" demekti.
+   Dikey düzende flex-basis yüksekliği etkiler, bu yüzden sıfırlıyoruz
+   (auto = içeriğin kendi yüksekliği) ve genişliği width ile veriyoruz. */
+.profil-istatistikler {
+    flex-basis: auto;
+    width: 100%;
+}
+
+.profil-karti::before,
+.profil-karti::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+}
+
+.profil-karti::before {
+    width: 150px;
+    height: 150px;
+    top: -55px;
+    right: -45px;
+}
+
+.profil-karti::after {
+    width: 110px;
+    height: 110px;
+    bottom: -40px;
+    left: -35px;
+}
+
+/* ">" = doğrudan çocuk. "*" = her şey. Yani kartın içindeki tüm elemanlar.
+   position: relative + z-index: 1 = bu elemanlar süs dairelerin ÖNÜNE geçsin,
+   yazılar dairelerin altında kalmasın. */
+.profil-karti > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* YAPIŞKAN SOL SÜTUN: sayfayı aşağı kaydırırken sol sütun yukarıda sabit kalır,
+   profil kartı hep görünür.
+   position: sticky = normal yerinde durur, ekranın üstüne dayanınca "yapışır".
+   top: 20px = ekranın üstünden 20 piksel aşağıda yapış.
+   DEĞİŞTİRME İSTEĞİ: Yapışmasını istemezsen bu bloğu sil. */
+.sol-sutun {
+    position: sticky;
+    top: 20px;
+}
+
+.profil-seviye {
+    display: inline-block;
+    padding: 4px 22px;
+    font-size: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+}
+
+/* İlerleme çubuğunun "yolu" biraz kalınlaşıyor (10px → 14px) ve
+   hafif koyu bir zemin alıyor, dolgu daha net seçilsin diye.
+   DEĞİŞTİRME İSTEĞİ: Kalınlık için height. */
+.ilerleme-kutu {
+    height: 14px;
+    margin-top: 12px;
+    background: rgba(0, 0, 0, 0.18);
+}
+
+/* Çubuğun dolu kısmı artık beyaz değil, sarı-turuncu renk geçişi.
+   linear-gradient(90deg, ...) = soldan sağa iki renk arası geçiş.
+   box-shadow: 0 0 10px ... = çubuğun çevresinde sarı bir "ışıma" (glow).
+   Not: ".ilerleme-dolgu" için yazdığımız "transition: width" kuralı
+   (çubuğun kayarak dolması) bu kuralla bozulmaz, aynen çalışmaya devam eder.
+   DEĞİŞTİRME İSTEĞİ: İki renk kodunu değiştirerek çubuk rengini değiştir. */
+.ilerleme-dolgu {
+    background: linear-gradient(90deg, #ffeaa7, #fdcb6e);
+    box-shadow: 0 0 10px rgba(253, 203, 110, 0.8);
+}
+
+/* Çubuğun altındaki "85 / 400 puan" yazısı biraz büyüyor. */
+.ilerleme-yazi {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+.istatistik {
+    padding: 14px 10px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(6px);
+    transition: transform 0.2s;
+}
+
+    /* Fare kutunun üstüne gelince 3 piksel yukarı kalkar. */
+    .istatistik:hover {
+        transform: translateY(-3px);
+    }
+
+/* Büyük sayı büyüyor (24px → 30px). */
+.istatistik-sayi {
+    font-size: 30px;
+}
+
+/* Küçük etiket: harfler arasına hafif boşluk koyar, daha şık okunur.
+   letter-spacing = harf aralığı. */
+.istatistik-etiket {
+    letter-spacing: 0.5px;
+}
+
+.ekle-satiri {
+    position: relative;
+    overflow: hidden;
+    padding: 24px 20px 20px;
+    gap: 12px;
+}
+
+    /* Kartın üstündeki ince renk geçişli şerit (süs eleman, HTML'e eklemedik).
+   position: absolute + top/left/right: 0 = kartın üst kenarına yapış ve
+   tüm genişliği kapla. height = şeridin kalınlığı.
+   DEĞİŞTİRME İSTEĞİ: Kalınlık için height, renkler için iki değişkeni değiştir. */
+    .ekle-satiri::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 6px;
+        background: linear-gradient(90deg, var(--ana-renk), var(--ikinci-renk));
+    }
+
+/* Kart başlığı. flex-basis: 100% = satırın tamamını kapla, böylece başlık
+   tek başına üst satırda durur, diğer elemanlar alta iner.
+   margin: 0 = tarayıcının h3 için koyduğu varsayılan boşlukları sıfırla. */
+.ekle-baslik {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 18px;
+    color: var(--yazi-renk);
+}
+
+/* Yazı kutusu ve kategori listesi: daha büyük, çerçevesi kalın ve yumuşak.
+   background: #fafbff = çok hafif mavimsi beyaz, kart beyazından hafifçe ayrılır.
+   transition = odaklanınca çerçeve rengi ve ışıma ani değil yumuşak değişir.
+   DEĞİŞTİRME İSTEĞİ: Yuvarlaklık için border-radius, yazı boyutu için font-size. */
+.ekle-satiri input,
+.ekle-satiri select {
+    padding: 14px 16px;
+    border: 2px solid #e6e8ef;
+    border-radius: 12px;
+    font-size: 16px;
+    background: #fafbff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* "+ Ekle" düğmesi: ana renkten ikinci renge geçişli, gölgeli ve büyük.
+   box-shadow: 0 6px 14px rgba(106, 90, 205, 0.35) = mor tonlu yumuşak gölge,
+   düğme yükselmiş gibi görünür. rgba içindeki üç sayı --ana-renk'in RGB
+   karşılığı, temayı değiştirirsen bunu da değiştir.
+   Genel "button:hover" ve "button:active" kuralları (koyulaşma, küçülme)
+   bu düğmede de çalışmaya devam eder. */
+.ekle-satiri button {
+    padding: 14px 28px;
+    font-size: 16px;
+    background: linear-gradient(135deg, var(--ana-renk), var(--ikinci-renk));
+    box-shadow: 0 6px 14px rgba(106, 90, 205, 0.35);
+}
+
+ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 150px;
+    margin-bottom: 0;
+    padding: 18px 16px 14px;
+    background: #fff4a8;
+    border-radius: 3px 3px 3px 18px;
+    box-shadow: 4px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+    /* Yazı bölümü: flex: 1 = kalan boş dikey yeri doldurur.
+   Dikey düzende bu, Sil düğmesini kağıdın EN ALTINA iter
+   (eskiden yatay düzende sağa itiyordu).
+   width: 100% = kağıdın tüm genişliğini kapla. */
+    li span {
+        flex: 1;
+        width: 100%;
+    }
+
+    /* Sil düğmesi: kağıdın sağ alt köşesinde dursun.
+   align-self: flex-end = bu eleman tek başına SAĞA yaslanır. */
+    li .sil {
+        align-self: flex-end;
+    }
+
+    li.kagit-ders {
+        background: #e4ddff;
+    }
+    /* açık mor */
+    li.kagit-spor {
+        background: #c9f2e3;
+    }
+    /* açık yeşil */
+    li.kagit-is {
+        background: #ffd9cc;
+    }
+    /* açık turuncu */
+    li.kagit-kisisel {
+        background: #cfe6ff;
+    }
+    /* açık mavi */
+    li.kagit-alisveris {
+        background: #ffd6e8;
+    }
+    /* açık pembe (sarı rozet pembe üzerinde öne çıkar) */
+
+    /* Kağıtların üzerindeki küçük bilgi satırı (tarih vb.) pastel zeminde
+   okunsun diye gri biraz koyulaşıyor. */
+    li span small {
+        color: #666666;
+    }
+
+    li {
+        position: relative;
+        padding-top: 28px;
+    }
+
+    li:nth-child(3n+1) {
+        transform: rotate(-1.5deg);
+    }
+
+    li:nth-child(3n+2) {
+        transform: rotate(1deg);
+    }
+
+    li:nth-child(3n) {
+        transform: rotate(-0.5deg);
+    }
+
+    li:hover {
+        transform: rotate(0deg) translateY(-4px);
+        box-shadow: 6px 10px 18px rgba(0, 0, 0, 0.22);
+    }
+
+    li::before {
+        content: "";
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        width: 72px;
+        height: 22px;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        transform: translateX(-50%) rotate(-2deg);
+    }
+
+    li span {
+        font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+        font-size: 17px;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+        li span small {
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 12px;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        li .rozet {
+            display: block;
+            width: fit-content;
+            margin-bottom: 6px;
+        }
+
+        li input[type="checkbox"] {
+            position: absolute;
+            top: 12px;
+            left: 14px;
+            width: 22px;
+            height: 22px;
+        }
+
+li {
+    padding-top: 44px;
+}
+
+li .sil {
+    background: transparent;
+    color: #d63031;
+    border: 1.5px solid #d63031;
+    padding: 3px 12px;
+    font-size: 12px;
+}
+
+/* Fare üstüne gelince düğme dolar: kırmızı zemin, beyaz yazı.
+   filter: none = genel "button:hover" kuralındaki koyulaşmayı bu düğmede iptal et
+     (zaten rengi değiştiriyoruz, üstüne bir de koyulaşmasın). */
+li .sil:hover {
+    background: #d63031;
+    color: white;
+    filter: none;
+}
+
+li.bitti {
+    filter: saturate(0.65);
+}
+
+li.bitti::after {
+    content: "TAMAM ✓";
+    position: absolute;
+    left: 16px;
+    bottom: 14px;
+    padding: 1px 8px;
+    border: 2px solid #00b894;
+    border-radius: 6px;
+    color: #00b894;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    opacity: 0.85;
+    transform: rotate(-8deg);
+    pointer-events: none;
+}
+
+@keyframes kagitGel {
+    from {
+        opacity: 0;
+        translate: 0 18px;
+    }
+
+    to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
+
+ul.animasyonlu li {
+    animation: kagitGel 0.45s ease-out backwards;
+}
+
+    /* Kağıtlar sırayla gelsin: her biri bir öncekinden 0.07 saniye geç başlar.
+   İlk 8 kağıt için yazdık, sonrakiler gecikmesiz gelir.
+   (Bu kurallar "animation" kısayolundan SONRA yazılmalı, kısayol gecikmeyi sıfırlar.)
+   DEĞİŞTİRME İSTEĞİ: Aralığı artırmak için 0.07 sayılarını büyüt. */
+    ul.animasyonlu li:nth-child(1) {
+        animation-delay: 0s;
+    }
+
+    ul.animasyonlu li:nth-child(2) {
+        animation-delay: 0.07s;
+    }
+
+    ul.animasyonlu li:nth-child(3) {
+        animation-delay: 0.14s;
+    }
+
+    ul.animasyonlu li:nth-child(4) {
+        animation-delay: 0.21s;
+    }
+
+    ul.animasyonlu li:nth-child(5) {
+        animation-delay: 0.28s;
+    }
+
+    ul.animasyonlu li:nth-child(6) {
+        animation-delay: 0.35s;
+    }
+
+    ul.animasyonlu li:nth-child(7) {
+        animation-delay: 0.42s;
+    }
+
+    ul.animasyonlu li:nth-child(8) {
+        animation-delay: 0.49s;
+    }
+
+/* prefers-reduced-motion = bilgisayarında "hareketleri azalt" ayarı açık olan
+   kullanıcılar için animasyonu kapat. Hareketten rahatsız olan insanlar için
+   standart bir erişilebilirlik önlemi. */
+@media (prefers-reduced-motion: reduce) {
+    ul.animasyonlu li {
+        animation: none;
+    }
+}
+
+@keyframes kagitPop {
+    0% {
+        opacity: 0;
+        scale: 0.5;
+    }
+
+    70% {
+        opacity: 1;
+        scale: 1.08;
+    }
+
+    100% {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+/* Sadece JavaScript'in "yeni" sınıfı verdiği kağıtta çalışır.
+   DEĞİŞTİRME İSTEĞİ: Süreyi 0.4s ile, zıplamanın büyüklüğünü yukarıdaki
+   1.08 değeriyle ayarla. */
+li.yeni {
+    animation: kagitPop 0.4s ease-out;
+}
+
+/* "Hareketleri azalt" ayarı açık olanlar için bu animasyon da kapansın
+   (Adım 69'daki aynı erişilebilirlik önlemi). */
+@media (prefers-reduced-motion: reduce) {
+    li.yeni {
+        animation: none;
+    }
+}
+
+.site-baslik {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+/* Logo kutusu: renk geçişli, yuvarlak köşeli kare, içinde emoji.
+   Boyutu width ve height ile, yuvarlaklığı border-radius ile ayarla
+   (width ve height AYNI kalsın, yoksa kare bozulur).
+   rgba(106, 90, 205, 0.35) = --ana-renk'in RGB karşılığı, gölgeye mor ton verir. */
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    font-size: 28px;
+    background: linear-gradient(135deg, var(--ana-renk), var(--ikinci-renk));
+    box-shadow: 0 8px 18px rgba(106, 90, 205, 0.35);
+}
+
+/* Başlık (h1): artık logonun yanında olduğu için sola yaslı ve boşluksuz.
+   ".site-baslik h1" eski "h1" kuralından daha özel olduğu için çakışan
+   özellikleri (ortalama, alt boşluk) ezer. Renk geçişi hilesi aynen çalışmaya devam eder.
+   DEĞİŞTİRME İSTEĞİ: Boyutu font-size ile değiştir. */
+.site-baslik h1 {
+    margin: 0;
+    text-align: left;
+    font-size: 30px;
+}
+
+/* Başlığın altındaki küçük açıklama yazısı. */
+.alt-baslik {
+    margin: 2px 0 0;
+    font-size: 14px;
+    color: var(--soluk-yazi);
+}
+
+/* E-posta çubuğu: beyaz, yuvarlak köşeli, hafif gölgeli şerit.
+   (display: flex ve space-between eski .ust-cubuk kuralından geliyor,
+   e-posta solda, Çıkış sağda duruyor.)
+   DEĞİŞTİRME İSTEĞİ: Boşluk için padding, köşe için border-radius. */
+.ust-cubuk {
+    padding: 10px 14px;
+    background: var(--kart-zemin);
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    margin-bottom: 20px;
+}
+
+/* E-posta yazısı: başında küçük bir kişi simgesi, uzun adres taşmasın.
+   ::before + content = HTML'e yazmadan başına simge ekler.
+   white-space: nowrap + overflow: hidden + text-overflow: ellipsis = uzun
+     e-posta alt satıra geçmez, sığmayan kısım "..." olur (Adım 56'daki gibi).
+   margin-right = e-posta ile Çıkış düğmesi arasında boşluk.
+   DEĞİŞTİRME İSTEĞİ: Simgeyi content'teki emojiden değiştir. */
+#kullaniciYazi {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 12px;
+}
+
+#kullaniciYazi::before {
+    content: "👤";
+    margin-right: 8px;
+}
+
+@media (max-width: 800px) {
+
+    /* 320px 1fr (iki sütun) yerine tek sütun: 1fr = kalan genişliğin TAMAMI.
+       Tek sütun olunca sol-sutun ve sag-sutun alt alta dizilir:
+       önce profil kartı ve son tamamlananlar, altında görev ekleme ve kağıtlar. */
+    .duzen {
+        grid-template-columns: 1fr;
+    }
+
+    /* Sol sütunun "yapışkan" davranışını kapat. Masaüstünde sütun yanda durduğu için
+       kaydırırken ekranda kalması iyiydi. Telefonda sütun sayfanın EN ÜSTÜNDE, yapışkan
+       kalırsa kaydırırken ekranın büyük kısmını kaplar ve görevler görünmez.
+       static = normal akış, yapışma yok (position'ın varsayılan değeri). */
+    .sol-sutun {
+        position: static;
+    }
+}
+
+@media (max-width: 800px) {
+
+    /* Sayfanın üst boşluğu 40px'ten 20px'e, yan boşluklar 16px'ten 12px'e.
+       Telefonda her piksel değerli, içerik ekranı daha iyi kullansın.
+       DEĞİŞTİRME İSTEĞİ: Kenarlardan daha fazla boşluk istersen 12px'i büyüt. */
+    body {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+
+    /* Üst kısım: logo, başlık ve alt yazı küçülüyor.
+       Logoda width ve height AYNI sayıda kalmalı, yoksa kare bozulur. */
+    .site-baslik {
+        margin-bottom: 18px;
+    }
+
+    .logo {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+        border-radius: 13px;
+    }
+
+    .site-baslik h1 {
+        font-size: 24px;
+    }
+
+    .alt-baslik {
+        font-size: 13px;
+    }
+
+    /* Giriş kartının iç boşluğu azalıyor. */
+    #girisAlani {
+        padding: 18px;
+    }
+
+    /* Giriş kutularının yazı boyutunu 16px yapıyoruz.
+       İPUCU: iPhone'lar yazı boyutu 16px'ten küçük kutuya dokununca sayfayı
+       otomatik yakınlaştırır ve geri uzaklaştırmaz. 16px bunu önler. */
+    #girisAlani input {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 800px) {
+
+    /* Profil kartı: iç boşluk, elemanlar arası boşluk, simge ve yazılar küçülüyor. */
+    .profil-karti {
+        padding: 20px 16px;
+        gap: 12px;
+    }
+
+    .profil-harf {
+        width: 72px;
+        height: 72px;
+        font-size: 30px;
+    }
+
+    .profil-seviye {
+        font-size: 18px;
+    }
+
+    .istatistik-sayi {
+        font-size: 26px;
+    }
+
+    /* Görev ekleme kartı: iç boşluk azalıyor. Düğmenin yatay boşluğu 28px'ten
+       20px'e iniyor ki "+ Ekle" düğmesi dar ekranda kategori listesini sıkıştırmasın. */
+    .ekle-satiri {
+        padding: 22px 16px 16px;
+    }
+
+    .ekle-satiri button {
+        padding: 14px 20px;
+    }
+
+    /* Görev listesine yanlardan 6 piksel iç boşluk veriyoruz.
+       Kağıtlar hafif eğik durduğu için (Adım 65), tam genişlikteyken köşeleri
+       ekranın dışına taşıp sayfayı yana kaydırılabilir yapabiliyor.
+       Bu küçük boşluk eğimli köşelere yer açıyor.
+       DEĞİŞTİRME İSTEĞİ: Yine yana kayma görürsen 6px'i büyüt (örn. 10px). */
+    ul {
+        padding: 0 6px;
+    }
+
+    /* Kağıtların minimum yüksekliği 150px'ten 130px'e iniyor,
+       telefonda alt alta dizilen kağıtlar çok yer kaplamasın. */
+    li {
+        min-height: 130px;
+    }
+}
+

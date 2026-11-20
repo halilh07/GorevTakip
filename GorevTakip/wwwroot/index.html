@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Görev Takip</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header class="site-baslik">
+        <span class="logo">📝</span>
+        <div>
+            <h1>Görev Takip</h1>
+            <p class="alt-baslik">Planla, tamamla, puan topla</p>
+        </div>
+    </header>
+
+    <!-- ===== BÖLÜM 1: GİRİŞ ALANI =====
+         Kullanıcı giriş yapmamışsa bu bölüm görünür.
+         DEĞİŞTİRME İSTEĞİ: Yazıları (placeholder, düğme adları) buradan değiştirebilirsin.
+         ÖNEMLİ: id'leri (eposta, sifre, girisBtn...) değiştirirsen script.js'teki
+         aynı adları da değiştirmen gerekir, JS elemanları id'siyle buluyor. -->
+    <div id="girisAlani">
+        <p class="giris-aciklama">Görevlerini zamanında tamamla, puan kazan, seviye atla. 🚀</p>
+        <input id="eposta" type="email" placeholder="E-posta" />
+        <input id="sifre" type="password" placeholder="Şifre" />
+        <div class="giris-dugmeleri">
+            <button id="girisBtn">Giriş Yap</button>
+            <button id="kayitBtn">Kayıt Ol</button>
+        </div>
+        <!-- Hata ve bilgi mesajları buraya yazılacak (örn. "Şifre hatalı") -->
+        <p id="mesaj"></p>
+    </div>
+
+    <!-- ===== BÖLÜM 2: UYGULAMA ALANI =====
+         Kullanıcı giriş yapmışsa bu bölüm görünür.
+         class="gizli" = başlangıçta gizli, giriş yapılınca JS gösterecek.
+         İçindeki görev kısmı eskisiyle aynı. -->
+    <div id="uygulamaAlani" class="gizli">
+
+        <!-- Üst çubuk: giriş yapanın e-postası ve çıkış düğmesi -->
+        <div class="ust-cubuk">
+            <span id="kullaniciYazi"></span>
+            <button id="cikisBtn">Çıkış</button>
+        </div>
+
+        <div class="duzen">
+            <div class="sol-sutun">
+
+
+                <!-- ===== PROFİL KARTI ===== -->
+                <div id="profilKarti" class="profil-karti">
+
+                    <!-- Yuvarlak profil simgesi. Kullanıcının e-postasının ilk harfi
+                içine yazılacak (örn. "A"). -->
+                    <div id="profilHarf" class="profil-harf"></div>
+
+                    <!-- Seviye bilgisi -->
+                    <div class="profil-bilgi">
+                        <div class="profil-seviye">
+                            Seviye <span id="profilSeviye">1</span>
+                            <!-- İLERLEME ÇUBUĞU: iki iç içe kutudan oluşur.
+                        Dıştaki (ilerleme-kutu) = boş çubuğun tamamı, "yol".
+                        İçteki (ilerlemeDolgu) = dolu kısım. JavaScript bu kutunun
+                        GENİŞLİĞİNİ yüzde olarak ayarlayacak (%25 → çubuğun dörtte biri dolu).
+                        Şimdilik ikisi de boş, görünmez. CSS'i bir sonraki adımda yazacağız.
+                        DEĞİŞTİRME İSTEĞİ: id'leri değiştirirsen script.js'teki adları da
+                        değiştir. class adlarını değiştirirsen style.css'tekileri de. -->
+                            <div class="ilerleme-kutu">
+                                <div id="ilerlemeDolgu" class="ilerleme-dolgu"></div>
+                            </div>
+
+                            <!-- Çubuğun altındaki yazı. Örn. "150 / 600 puan".
+                        Değeri JavaScript yazacak, şimdilik yedek bir yazı var. -->
+                            <div id="ilerlemeYazi" class="ilerleme-yazi">0 / 200 puan</div>
+                        </div>
+                    </div>
+
+                    <!-- İstatistikler: her biri bir büyük sayı + altında küçük etiket -->
+                    <div class="profil-istatistikler">
+                        <div class="istatistik">
+                            <span class="istatistik-sayi" id="profilPuan">0</span>
+                            <span class="istatistik-etiket">Toplam puan</span>
+                        </div>
+                        <div class="istatistik">
+                            <span class="istatistik-sayi" id="profilTamamlanan">0</span>
+                            <span class="istatistik-etiket">Tamamlanan görev</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Son Tamamlanan görevler bölümü -->
+                <div class="son-bolum">
+                    <h2 class="bolum-baslik">Son tamamlananlar</h2>
+                    <div id="sonListe" class="son-liste"></div>
+                    <p id="sonBos" class="son-bos">Henüz tamamlanan görev yok.</p>
+                </div>
+            </div> <!-- sol-sutun burada biter -->
+            <div class="sag-sutun">
+
+                <div class="ekle-satiri">
+                    <h3 class="ekle-baslik">✨ Yeni görev ekle</h3>
+                    <input id="baslik" type="text" placeholder="Yeni görev" />
+                    <!-- Kategori seçim kutusu (açılır liste).-->
+                    <select id="kategori">
+                        <!-- İlk seçenek boş değerli: kullanıcı bir kategori seçmeden bırakırsa
+                        değer "" (boş) olur. Bunu sunucu reddediyor, arayüzde de
+                        kontrol edeceğiz. -->
+                        <option value="">Kategori seç</option>
+                        <option value="Ders">Ders</option>
+                        <option value="Spor">Spor</option>
+                        <option value="İş">İş</option>
+                        <option value="Kişisel">Kişisel</option>
+                        <option value="Alışveriş">Alışveriş</option>
+                    </select>
+                    <button id="ekleBtn">+ Ekle</button>
+                </div>
+
+                <p id="sayac"></p>
+                <ul id="liste"></ul>
+                <!-- Liste boşken gösterilecek mesaj -->
+                <p id="bosMesaj" class="bos-mesaj gizli">Henüz görevin yok. Yukarıdan ilk görevini ekle! 🚀</p>
+            </div> <!-- sag-sutun burada biter -->
+        </div> <!-- duzen burada biter -->
+    </div>
+
+            <!-- script.js en altta kalır: JS çalışırken yukarıdaki elemanlar hazır olmalı -->
+            <script src="script.js"></script>
+</body>
+</html>
